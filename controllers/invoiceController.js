@@ -95,8 +95,32 @@ const getInvoiceById = async (req, res, next) => {
     }
 };
 
+const updateInvoiceStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const companyId = req.user.company;
+
+        const invoice = await Invoice.findOneAndUpdate(
+            { _id: id, company: companyId },
+            { status },
+            { new: true }
+        );
+        if (!invoice) {
+            return res.status(404).json({ message: 'Invoice not found.' });
+        }
+        res.status(200).json({ success: true, data: invoice });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+
+
+
 module.exports = {
     createInvoice,
     getInvoices,
-    getInvoiceById
+    getInvoiceById,
+    updateInvoiceStatus
 };
