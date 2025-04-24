@@ -9,12 +9,7 @@ const createInvoice = async (req, res, next) => {
         const companyId = req.user.company;
 
         const itemIds = items.map(i => i.itemId);
-
-        const validItems = await Item.find({
-            _id: { $in: itemIds },
-            company: companyId
-        });
-
+        const validItems = await Item.find({ _id: { $in: itemIds }, company: companyId });
 
         if (validItems.length !== items.length) {
             return res.status(400).json({
@@ -26,10 +21,14 @@ const createInvoice = async (req, res, next) => {
 
         const invoiceItems = items.map(i => {
             const matchedItem = validItems.find(item => item._id.toString() === i.itemId);
+            const quantity = Number(i.quantity || 1);
+            const unitPrice = matchedItem.unitPrice;
+            const priceAtTime = unitPrice * quantity;
+
             return {
                 item: matchedItem._id,
-                quantity: matchedItem.quantity,
-                priceAtTime: matchedItem.unitPrice
+                quantity,
+                priceAtTime
             };
         });
 
@@ -69,7 +68,7 @@ const getInvoices = async (req, res, next) => {
         const companyId = req.user.company;
 
         const invoices = await Invoice.find({ company: companyId })
-            .populate('items.item', 'description quantity unitPrice')
+            .populate('items.item', 'description unitPrice')
             .sort({ createdAt: -1 });
 
         res.status(200).json({ success: true, count: invoices.length, data: invoices });
@@ -84,7 +83,7 @@ const getInvoiceById = async (req, res, next) => {
         const companyId = req.user.company;
 
         const invoice = await Invoice.findOne({ _id: id, company: companyId })
-            .populate('items.item', 'description unitPrice unitType');
+            .populate('items.item', 'description unitPrice');
 
         if (!invoice) {
             return res.status(404).json({ message: 'Invoice not found.' });

@@ -1,14 +1,8 @@
-// utils/calculateInvoice.js
 const calculateInvoice = (items = [], discount = 0, gstRate = 18) => {
     let subtotal = 0;
 
     items.forEach(item => {
-        const quantity = Number(item.quantity || 1); // default to 1 if missing
-        const price = Number(item.priceAtTime);
-
-        if (!isNaN(quantity) && !isNaN(price)) {
-            subtotal += quantity * price;
-        }
+        subtotal += item.priceAtTime; // Already calculated as quantity * unitPrice
     });
 
     const discountAmount = (subtotal * discount) / 100;

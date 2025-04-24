@@ -11,11 +11,6 @@ const itemSchema = new mongoose.Schema({
         required: [true, 'Description is required'],
         trim: true
     },
-    // quantity: {
-    //     type: Number,
-    //     required: [true, 'Quantity is required'],
-    //     min: [1, 'Quantity must be at least 1']
-    // },
     unitPrice: {
         type: Number,
         required: [true, 'Unit price is required'],

@@ -4,20 +4,20 @@ const mongoose = require('mongoose');
 // Create Item
 const createItem = async (req, res) => {
     try {
-        const { description, quantity, unitPrice } = req.body;
+        const { name, description, unitPrice } = req.body;
         const companyId = req.user.company; // Changed from req.company to req.user.company
 
         // Validate input
-        if (!description || !quantity || !unitPrice) {
+        if (!description || !name || !unitPrice) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide description, quantity and unitPrice'
+                message: 'Please provide name, description and unitPrice'
             });
         }
 
         const item = await Item.create({
             description,
-            quantity,
+            name,
             unitPrice,
             company: companyId
         });
